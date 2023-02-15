@@ -5,6 +5,8 @@ import java.util.Date;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import com.task.project.exception.APIException;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -31,5 +33,15 @@ public class JwtTokenProvider {
 		.parseClaimsJws(token).getBody();
 		
 		return claims.getSubject();
+	}
+	
+	public boolean validateToken(String token) {
+		try {
+			Jwts.parser().setSigningKey("JwtSecreteKey")
+			.parseClaimsJws(token).getBody();
+			return true;
+		}catch(Exception ex) {
+			throw new APIException("Token issue :\t"+ex.getMessage());
+		}
 	}
 }
